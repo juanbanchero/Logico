@@ -20,5 +20,3 @@ pareja(bernardo,bianca).
 pareja(bernardo,charo).
 
 %% Como no se si Bianca es pareja de Demóstenes, no puedo afirmar algo que no sea cierto. No tiene sentido escribir algo que no es cierto en Prolog
-
-%%%% Punto 3 %%%%
