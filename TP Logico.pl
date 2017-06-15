@@ -19,7 +19,7 @@ trabajaPara(Empleador,george) :- saleCon(bernardo,Empleador).
 
 %%%%      Punto 1     %%%% 
 
-saleCon(UnaPersona,OtraPersona) :- pareja(UnaPersona,OtraPersona).]
+saleCon(UnaPersona,OtraPersona) :- pareja(UnaPersona,OtraPersona).
 saleCon(UnaPersona,OtraPersona) :- pareja(OtraPersona,UnaPersona).
 
 %%%%      Punto 4     %%%% 
@@ -32,7 +32,7 @@ acataOrden(Jefe,Empleado) :- trabajaPara(Jefe,Empleado).
 acataOrden(Jefe,Empleado) :- trabajaPara(Jefe,Empleador),acataOrden(Empleador,Empleado).
 
 %%%% SEGUNDA ENTREGA %%%%
-% Información base
+
 % personaje(Nombre, Ocupacion)
 personaje(pumkin,     ladron([estacionesDeServicio, licorerias])).
 personaje(honeyBunny, ladron([licorerias, estacionesDeServicio])).
@@ -63,9 +63,62 @@ amigo(vincent, jules).
 amigo(jules, jimmie).
 amigo(vincent, elVendedor).
 
+%%%%      Punto 1     %%%%
 
+esMaton(Persona) :- personaje(Persona, mafioso(maton)).
 
+robaLicorerias(Persona) :- personaje(Persona, ladron(LugaresDondeRoba)), member(licorerias,LugaresDondeRoba).
 
+esPeligroso(Persona) :- esMaton(Persona).
+esPeligroso(Persona) :- robaLicorerias(Persona).
+esPeligroso(Persona) :- trabajaPara(Jefe,Persona), esPeligroso(Jefe).
 
+%%%%      Punto 2     %%%%
 
+esPersona(Persona) :- personaje(Persona,_).
 
+sonAmigos(UnaPersona,OtraPersona) :- amigo(UnaPersona,OtraPersona).
+sonAmigos(UnaPersona,OtraPersona) :- amigo(OtraPersona,UnaPersona).
+
+relacionLaboral(UnaPersona,OtraPersona) :- trabajaPara(UnaPersona,OtraPersona).
+relacionLaboral(UnaPersona,OtraPersona) :- trabajaPara(OtraPersona,UnaPersona).
+
+loTieneCerca(UnaPersona,OtraPersona) :- sonAmigos(UnaPersona,OtraPersona).
+loTieneCerca(UnaPersona,OtraPersona) :- relacionLaboral(UnaPersona,OtraPersona).
+
+losQueTieneCerca(Persona,Cercanos) :- esPersona(Persona),
+                                      findall(Alguien, loTieneCerca(Persona,Alguien), Cercanos).
+
+tieneAlMenosUnoCerca(Persona) :- losQueTieneCerca(Persona,Cercanos), 
+                                 length(Cercanos,Cuantos), 
+                                 Cuantos > 0.
+
+leDaUnEncargo(Alguien,Otro) :- encargo(Alguien,Otro,_).
+
+sanCayetano(Persona) :- tieneAlMenosUnoCerca(Persona),
+                        forall(loTieneCerca(Persona,Cercano),leDaUnEncargo(Persona,Cercano)).
+
+%%%%      Punto 3     %%%%
+
+cantidadDePeliculas(Actriz,Cantidad) :- personaje(Actriz, actriz(Peliculas)), length(Peliculas,Cantidad).
+
+respetoMafioso(resuelveProblemas,10).
+respetoMafioso(capo,20).
+
+tieneRespeto(Persona) :- personaje(Persona, actriz(_)).
+tieneRespeto(Persona) :- personaje(Persona, mafioso(capo)).
+tieneRespeto(Persona) :- personaje(Persona, mafioso(resuelveProblemas)).
+tieneRespeto(vincent).
+
+nivelRespeto(Persona,Nivel) :- personaje(Persona, actriz(_)),
+                               cantidadDePeliculas(Persona, Cantidad),
+                               Nivel is Cantidad/10.
+
+nivelRespeto(Persona,Nivel) :- personaje(Persona, mafioso(Cargo)),
+                               respetoMafioso(Cargo,Nivel).
+
+nivelRespeto(vincent,15).
+
+nivelRespeto(Persona,Nivel) :- esPersona(Persona),
+                               not(tieneRespeto(Persona)),
+                               Nivel is 0.
