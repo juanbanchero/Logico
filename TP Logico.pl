@@ -105,11 +105,6 @@ cantidadDePeliculas(Actriz,Cantidad) :- personaje(Actriz, actriz(Peliculas)), le
 respetoMafioso(resuelveProblemas,10).
 respetoMafioso(capo,20).
 
-tieneRespeto(Persona) :- personaje(Persona, actriz(_)).
-tieneRespeto(Persona) :- personaje(Persona, mafioso(capo)).
-tieneRespeto(Persona) :- personaje(Persona, mafioso(resuelveProblemas)).
-tieneRespeto(vincent).
-
 nivelRespeto(Persona,Nivel) :- personaje(Persona, actriz(_)),
                                cantidadDePeliculas(Persona, Cantidad),
                                Nivel is Cantidad/10.
@@ -118,7 +113,3 @@ nivelRespeto(Persona,Nivel) :- personaje(Persona, mafioso(Cargo)),
                                respetoMafioso(Cargo,Nivel).
 
 nivelRespeto(vincent,15).
-
-nivelRespeto(Persona,Nivel) :- esPersona(Persona),
-                               not(tieneRespeto(Persona)),
-                               Nivel is 0.
