@@ -113,3 +113,15 @@ nivelRespeto(Persona,Nivel) :- personaje(Persona, mafioso(Cargo)),
                                respetoMafioso(Cargo,Nivel).
 
 nivelRespeto(vincent,15).
+%%%%      Punto 4     %%%%
+esRespetable(Persona) :- nivelRespeto(Persona,Nivel),
+						 Nivel >  9.
+						 
+losNoRespetables(NoRespetables) :- findall(Persona,(esPersona(Persona),not(esRespetable(Persona))),NoRespetables).
+
+losRespetables(Respetables):- findall(Persona,esRespetable(Persona),Respetables).
+
+respetabilidad(CantidadDeRespetables,CantidadDeNoRespetables) :- losRespetables(Respetables),
+											 length(Respetables,CantidadDeRespetables),
+											 losNoRespetables(NoRespetables),
+											 length(NoRespetables,CantidadDeNoRespetables).
