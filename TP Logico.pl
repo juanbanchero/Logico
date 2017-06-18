@@ -113,6 +113,7 @@ nivelRespeto(Persona,Nivel) :- personaje(Persona, mafioso(Cargo)),
                                respetoMafioso(Cargo,Nivel).
 
 nivelRespeto(vincent,15).
+
 %%%%      Punto 4     %%%%
 esRespetable(Persona) :- nivelRespeto(Persona,Nivel),
 						 Nivel >  9.
@@ -125,3 +126,22 @@ respetabilidad(CantidadDeRespetables,CantidadDeNoRespetables) :- losRespetables(
 											 length(Respetables,CantidadDeRespetables),
 											 losNoRespetables(NoRespetables),
 											 length(NoRespetables,CantidadDeNoRespetables).
+
+%%%%      Punto 5     %%%%
+
+listaDeEncargos(Encargado,ListaDeEncargos) :- esPersona(Encargado),
+										      findall(Encargo,encargo(_,Encargado,Encargo),ListaDeEncargos).
+
+cantidadDeEncargos(Encargado,CantidadDeEncargos) :- listaDeEncargos(Encargado,ListaDeEncargos),
+													length(ListaDeEncargos,CantidadDeEncargos).
+
+esMasAtareado(Persona,Persona2) :- cantidadDeEncargos(Persona,CantidadDeEncargos),
+								   cantidadDeEncargos(Persona2,CantidadDeEncargos2),
+								   CantidadDeEncargos > CantidadDeEncargos2.
+								   
+sonDistintasPersonas(Persona,Persona2) :- esPersona(Persona),
+										  esPersona(Persona2),
+										  Persona \= Persona2.
+
+masAtareado(Persona) :- esPersona(Persona),
+						forall(sonDistintasPersonas(Persona,Persona2),esMasAtareado(Persona,Persona2)).
