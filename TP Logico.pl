@@ -65,12 +65,10 @@ amigo(vincent, elVendedor).
 
 %%%%      Punto 1     %%%%
 
-esMaton(Persona) :- personaje(Persona, mafioso(maton)).
+ocupacionPeligrosa(mafioso(maton)).
+ocupacionPeligrosa(ladron(LugaresDondeRoba)) :- member(licorerias,LugaresDondeRoba). 
 
-robaLicorerias(Persona) :- personaje(Persona, ladron(LugaresDondeRoba)), member(licorerias,LugaresDondeRoba).
-
-esPeligroso(Persona) :- esMaton(Persona).
-esPeligroso(Persona) :- robaLicorerias(Persona).
+esPeligroso(Persona) :- personaje(Persona,Ocupacion), ocupacionPeligrosa(Ocupacion).
 esPeligroso(Persona) :- trabajaPara(Jefe,Persona), esPeligroso(Jefe).
 
 %%%%      Punto 2     %%%%
@@ -89,9 +87,7 @@ loTieneCerca(UnaPersona,OtraPersona) :- relacionLaboral(UnaPersona,OtraPersona).
 losQueTieneCerca(Persona,Cercanos) :- esPersona(Persona),
                                       findall(Alguien, loTieneCerca(Persona,Alguien), Cercanos).
 
-tieneAlMenosUnoCerca(Persona) :- losQueTieneCerca(Persona,Cercanos), 
-                                 length(Cercanos,Cuantos), 
-                                 Cuantos > 0.
+tieneAlMenosUnoCerca(Persona) :- loTieneCerca(Persona,_).
 
 leDaUnEncargo(Alguien,Otro) :- encargo(Alguien,Otro,_).
 
@@ -100,18 +96,13 @@ sanCayetano(Persona) :- tieneAlMenosUnoCerca(Persona),
 
 %%%%      Punto 3     %%%%
 
-cantidadDePeliculas(Actriz,Cantidad) :- personaje(Actriz, actriz(Peliculas)), length(Peliculas,Cantidad).
+respetoOcupacional(actriz(Peliculas),Nivel) :- length(Peliculas,Nivel).
+respetoOcupacional(mafioso(resuelveProblemas),10).
+respetoOcupacional(mafioso(capo),20).
 
-respetoMafioso(resuelveProblemas,10).
-respetoMafioso(capo,20).
-
-nivelRespeto(Persona,Nivel) :- personaje(Persona, actriz(_)),
-                               cantidadDePeliculas(Persona, Cantidad),
-                               Nivel is Cantidad/10.
-
-nivelRespeto(Persona,Nivel) :- personaje(Persona, mafioso(Cargo)),
-                               respetoMafioso(Cargo,Nivel).
-
+nivelRespeto(Persona,Nivel) :- personaje(Persona, Ocupacion),
+                               respetoOcupacional(Ocupacion,Nivel).
+                               
 nivelRespeto(vincent,15).
 
 %%%%      Punto 4     %%%%
